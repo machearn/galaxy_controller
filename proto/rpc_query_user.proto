@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "user.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message GetUserRequest {
+  int32 ID = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message DeleteEntryRequest {
+    int32 id = 1;
+}
+
+message DeleteEntryResponse {
+    bool success = 1;
+}

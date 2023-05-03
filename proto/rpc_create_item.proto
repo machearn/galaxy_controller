@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "item.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message CreateItemRequest {
+    string name = 1;
+    int32 quantity = 2;
+    int32 price = 3;
+}
+
+message CreateItemResponse {
+    Item item = 1;
+}

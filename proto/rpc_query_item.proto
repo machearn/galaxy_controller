@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+
+import "item.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message GetItemRequest {
+    int32 id = 1;
+}
+
+message GetItemResponse {
+    Item item = 1;
+}
+
+message ListItemsRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message ListItemsResponse {
+    repeated Item items = 1;
+}

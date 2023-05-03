@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message Entry {
+    int32 ID = 1;
+    int32 user_id = 2;
+    int32 item_id = 3;
+    int32 quantity = 4;
+    int32 total = 5;
+    google.protobuf.Timestamp created_at = 6;
+}

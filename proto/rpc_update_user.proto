@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+import "user.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message UpdateUserRequest {
+  int32 ID = 1;
+  optional string username = 2;
+  optional string fullname = 3;
+  optional string email = 4;
+  optional string password = 5;
+  optional int32 plan = 6;
+  optional bool auto_renew = 7;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}

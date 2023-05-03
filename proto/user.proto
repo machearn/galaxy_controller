@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message User {
+    int32 ID = 1;
+    string username = 2;
+    string fullname = 3;
+    string email = 4;
+    int32 plan = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp expired_at = 7;
+    bool auto_renew = 8;
+}

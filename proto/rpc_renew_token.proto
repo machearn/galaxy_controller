@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+message RenewAccessTokenRequest {
+    string refresh_token = 1;
+}
+
+message RenewAccessTokenResponse {
+    string access_token = 1;
+    google.protobuf.Timestamp expired_at = 2;
+}
