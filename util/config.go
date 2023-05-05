@@ -6,7 +6,9 @@ import (
 
 // Config is a struct that holds the configuration for the application.
 type Config struct {
-	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
+	GrpcServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
+	HTTPServerAddress string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	TokenSymmetricKey string `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 }
 
 func LoadConfig(configPath string) (Config, error) {
