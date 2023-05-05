@@ -8,5 +8,8 @@ protoc:
 start:
 	go run main.go
 
+grpc_mock:
+	mockgen -package mockpb -destination pb/mock/client.go github.com/machearn/galaxy_controller/pb GalaxyClient
+
 .PHONY:
-	test protoc start
+	test protoc start grpc_mock
