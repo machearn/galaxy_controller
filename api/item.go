@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -106,15 +107,86 @@ func (server *Server) ListItems(ctx *gin.Context) {
 	}
 
 	rows := result.GetItems()
-	var res ListItemsResponse
-	for _, row := range rows {
-		res.Items = append(res.Items, Item{
+	items := make([]Item, len(rows))
+	for i, row := range rows {
+		items[i] = Item{
 			ID:       row.ID,
 			Name:     row.Name,
 			Quantity: row.Quantity,
 			Price:    row.Price,
-		})
+		}
+	}
+	res := ListItemsResponse{
+		Items: items,
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+type UpdateItemRequest struct {
+	ID       int32   `json:"id"`
+	Name     *string `json:"name"`
+	Quantity *int32  `json:"quantity"`
+	Price    *int32  `json:"price"`
+}
+
+func (server *Server) UpdateItem(ctx *gin.Context) {
+	var req UpdateItemRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	grpcReq := pb.UpdateItemRequest{
+		Id:       req.ID,
+		Name:     req.Name,
+		Quantity: req.Quantity,
+		Price:    req.Price,
+	}
+
+	result, err := server.grpc.UpdateItem(ctx, &grpcReq)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	item := result.GetItem()
+	ctx.JSON(http.StatusOK, Item{
+		ID:       item.ID,
+		Name:     item.Name,
+		Quantity: item.Quantity,
+		Price:    item.Price,
+	})
+}
+
+type DeleteItemRequest struct {
+	ID int32 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) DeleteItem(ctx *gin.Context) {
+	var req DeleteItemRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	grpcReq := pb.DeleteItemRequest{
+		Id: req.ID,
+	}
+
+	_, err := server.grpc.DeleteItem(ctx, &grpcReq)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
 }

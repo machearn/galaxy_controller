@@ -190,3 +190,84 @@ func TestListItems(t *testing.T) {
 
 	require.Equal(t, result, res)
 }
+
+func TestUpdateItem(t *testing.T) {
+	url := "/item/update"
+
+	data, err := json.Marshal(gin.H{
+		"id":       1,
+		"name":     "test",
+		"quantity": nil,
+	})
+	require.NoError(t, err)
+
+	name := "test"
+	grpcReq := pb.UpdateItemRequest{
+		Id:       1,
+		Name:     &name,
+		Quantity: nil,
+	}
+
+	grpcRes := pb.UpdateItemResponse{
+		Item: &pb.Item{
+			ID:       1,
+			Name:     name,
+			Quantity: 1,
+			Price:    1,
+		},
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	grpc := mockpb.NewMockGalaxyClient(ctrl)
+	grpc.EXPECT().UpdateItem(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+
+	server := NewTestServer(t, grpc)
+	recoder := httptest.NewRecorder()
+
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
+	require.NoError(t, err)
+
+	server.router.ServeHTTP(recoder, request)
+	require.Equal(t, http.StatusOK, recoder.Code)
+
+	data, err = io.ReadAll(recoder.Body)
+	require.NoError(t, err)
+
+	var res Item
+	err = json.Unmarshal(data, &res)
+	require.NoError(t, err)
+
+	require.Equal(t, grpcRes.Item.ID, res.ID)
+	require.Equal(t, grpcRes.Item.Name, res.Name)
+	require.Equal(t, grpcRes.Item.Quantity, res.Quantity)
+	require.Equal(t, grpcRes.Item.Price, res.Price)
+}
+
+func TestDeleteItem(t *testing.T) {
+	url := "/item/delete/1"
+
+	grpcReq := pb.DeleteItemRequest{
+		Id: 1,
+	}
+
+	grpcRes := pb.DeleteItemResponse{
+		Success: true,
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	grpc := mockpb.NewMockGalaxyClient(ctrl)
+	grpc.EXPECT().DeleteItem(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+
+	server := NewTestServer(t, grpc)
+	recoder := httptest.NewRecorder()
+
+	request, err := http.NewRequest(http.MethodDelete, url, nil)
+	require.NoError(t, err)
+
+	server.router.ServeHTTP(recoder, request)
+	require.Equal(t, http.StatusOK, recoder.Code)
+}
