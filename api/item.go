@@ -1,10 +1,10 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
 )
 
@@ -36,7 +36,8 @@ func (server *Server) CreateItem(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateItem(ctx, &grpcReq)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -66,7 +67,8 @@ func (server *Server) GetItem(ctx *gin.Context) {
 
 	result, err := server.grpc.GetItem(ctx, &grpcReq)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -102,7 +104,8 @@ func (server *Server) ListItems(ctx *gin.Context) {
 
 	result, err := server.grpc.ListItems(ctx, &grpcReq)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -146,11 +149,8 @@ func (server *Server) UpdateItem(ctx *gin.Context) {
 
 	result, err := server.grpc.UpdateItem(ctx, &grpcReq)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -180,11 +180,8 @@ func (server *Server) DeleteItem(ctx *gin.Context) {
 
 	_, err := server.grpc.DeleteItem(ctx, &grpcReq)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
