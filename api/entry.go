@@ -1,11 +1,11 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
 )
 
@@ -33,14 +33,24 @@ func (server *Server) CreateEntry(ctx *gin.Context) {
 	}
 
 	_, err := server.grpc.GetUser(ctx, &pb.GetUserRequest{ID: req.UserID})
-	if err != nil && err == sql.ErrNoRows {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err != nil {
+		apiErr := err.(*api_error.APIError)
+		if apiErr.Code == http.StatusNotFound {
+			ctx.JSON(http.StatusBadRequest, errorResponse(apiErr))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr))
 		return
 	}
 
 	_, err = server.grpc.GetItem(ctx, &pb.GetItemRequest{Id: req.ItemID})
-	if err != nil && err == sql.ErrNoRows {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err != nil {
+		apiErr := err.(*api_error.APIError)
+		if apiErr.Code == http.StatusNotFound {
+			ctx.JSON(http.StatusBadRequest, errorResponse(apiErr))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr))
 		return
 	}
 
@@ -53,7 +63,8 @@ func (server *Server) CreateEntry(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateEntry(ctx, &grpcReq)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -81,11 +92,8 @@ func (server *Server) GetEntry(ctx *gin.Context) {
 
 	result, err := server.grpc.GetEntry(ctx, &pb.GetEntryRequest{Id: req.ID})
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -123,11 +131,8 @@ func (server *Server) ListEntries(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntries(ctx, &grpcReq)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -170,11 +175,8 @@ func (server *Server) ListEntriesByUser(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntriesByUser(ctx, &grpcReq)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
@@ -217,11 +219,8 @@ func (server *Server) ListEntriesByItem(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntriesByItem(ctx, &grpcReq)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		apiErr := err.(*api_error.APIError)
+		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
 		return
 	}
 
