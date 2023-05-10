@@ -7,6 +7,7 @@ import "rpc_query_item.proto";
 import "rpc_update_item.proto";
 import "rpc_delete_item.proto";
 import "rpc_login_user.proto";
+import "rpc_create_session.proto";
 import "rpc_create_user.proto";
 import "rpc_query_user.proto";
 import "rpc_update_user.proto";
@@ -18,15 +19,19 @@ import "rpc_delete_entry.proto";
 
 option go_package = "github.com/machearn/galaxy_service/pb";
 
+message Empty {}
+
 service Galaxy {
     rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
     rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
     rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {}
     rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
-    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
+    rpc DeleteItem(DeleteItemRequest) returns (Empty) {}
     rpc Login(LoginRequest) returns (LoginResponse) {}
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse) {}
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+    rpc GetUserByUsername(GetUserByUsernameRequest) returns (GetUserResponse) {}
     rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
     rpc Authorize(AuthRequest) returns (AuthResponse) {}
     rpc RenewAccessToken(RenewAccessTokenRequest) returns (RenewAccessTokenResponse) {}
@@ -35,5 +40,5 @@ service Galaxy {
     rpc ListEntries(ListEntriesRequest) returns (ListEntriesResponse) {}
     rpc ListEntriesByUser(ListEntriesByUserRequest) returns (ListEntriesResponse) {}
     rpc ListEntriesByItem(ListEntriesByItemRequest) returns (ListEntriesResponse) {}
-    rpc DeleteEntry(DeleteEntryRequest) returns (DeleteEntryResponse) {}
+    rpc DeleteEntry(DeleteEntryRequest) returns (Empty) {}
 }

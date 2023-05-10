@@ -10,6 +10,11 @@ message GetUserRequest {
   int32 ID = 1;
 }
 
+message GetUserByUsernameRequest {
+  string username = 1;
+}
+
 message GetUserResponse {
   User user = 1;
+  string password = 2;
 }
