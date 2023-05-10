@@ -96,6 +96,26 @@ func (mr *MockGalaxyClientMockRecorder) CreateItem(arg0, arg1 interface{}, arg2 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateItem", reflect.TypeOf((*MockGalaxyClient)(nil).CreateItem), varargs...)
 }
 
+// CreateSession mocks base method.
+func (m *MockGalaxyClient) CreateSession(arg0 context.Context, arg1 *pb.CreateSessionRequest, arg2 ...grpc.CallOption) (*pb.CreateSessionResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateSession", varargs...)
+	ret0, _ := ret[0].(*pb.CreateSessionResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockGalaxyClientMockRecorder) CreateSession(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockGalaxyClient)(nil).CreateSession), varargs...)
+}
+
 // CreateUser mocks base method.
 func (m *MockGalaxyClient) CreateUser(arg0 context.Context, arg1 *pb.CreateUserRequest, arg2 ...grpc.CallOption) (*pb.CreateUserResponse, error) {
 	m.ctrl.T.Helper()
@@ -117,14 +137,14 @@ func (mr *MockGalaxyClientMockRecorder) CreateUser(arg0, arg1 interface{}, arg2 
 }
 
 // DeleteEntry mocks base method.
-func (m *MockGalaxyClient) DeleteEntry(arg0 context.Context, arg1 *pb.DeleteEntryRequest, arg2 ...grpc.CallOption) (*pb.DeleteEntryResponse, error) {
+func (m *MockGalaxyClient) DeleteEntry(arg0 context.Context, arg1 *pb.DeleteEntryRequest, arg2 ...grpc.CallOption) (*pb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteEntry", varargs...)
-	ret0, _ := ret[0].(*pb.DeleteEntryResponse)
+	ret0, _ := ret[0].(*pb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -137,14 +157,14 @@ func (mr *MockGalaxyClientMockRecorder) DeleteEntry(arg0, arg1 interface{}, arg2
 }
 
 // DeleteItem mocks base method.
-func (m *MockGalaxyClient) DeleteItem(arg0 context.Context, arg1 *pb.DeleteItemRequest, arg2 ...grpc.CallOption) (*pb.DeleteItemResponse, error) {
+func (m *MockGalaxyClient) DeleteItem(arg0 context.Context, arg1 *pb.DeleteItemRequest, arg2 ...grpc.CallOption) (*pb.Empty, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "DeleteItem", varargs...)
-	ret0, _ := ret[0].(*pb.DeleteItemResponse)
+	ret0, _ := ret[0].(*pb.Empty)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -214,6 +234,26 @@ func (mr *MockGalaxyClientMockRecorder) GetUser(arg0, arg1 interface{}, arg2 ...
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockGalaxyClient)(nil).GetUser), varargs...)
+}
+
+// GetUserByUsername mocks base method.
+func (m *MockGalaxyClient) GetUserByUsername(arg0 context.Context, arg1 *pb.GetUserByUsernameRequest, arg2 ...grpc.CallOption) (*pb.GetUserResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetUserByUsername", varargs...)
+	ret0, _ := ret[0].(*pb.GetUserResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByUsername indicates an expected call of GetUserByUsername.
+func (mr *MockGalaxyClientMockRecorder) GetUserByUsername(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockGalaxyClient)(nil).GetUserByUsername), varargs...)
 }
 
 // ListEntries mocks base method.

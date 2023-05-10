@@ -11,8 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/machearn/galaxy_controller/pb"
 	mockpb "github.com/machearn/galaxy_controller/pb/mock"
+	"github.com/machearn/galaxy_controller/util"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -45,6 +47,16 @@ func TestCreateEntry(t *testing.T) {
 		},
 	}
 
+	grpcAuthReq := pb.AuthRequest{
+		Token: util.GetRandomString(32),
+	}
+	grpcAuthRes := pb.AuthResponse{
+		ID:        uuid.New().String(),
+		UserId:    1,
+		CreatedAt: timestamppb.New(createAt),
+		ExpiredAt: timestamppb.New(createAt),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -52,12 +64,15 @@ func TestCreateEntry(t *testing.T) {
 	grpc.EXPECT().GetUser(gomock.Any(), gomock.Any()).Return(nil, nil)
 	grpc.EXPECT().GetItem(gomock.Any(), gomock.Any()).Return(nil, nil)
 	grpc.EXPECT().CreateEntry(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+	grpc.EXPECT().Authorize(gomock.Any(), gomock.Eq(&grpcAuthReq)).Return(&grpcAuthRes, nil)
 
 	server := NewTestServer(t, grpc)
 	recoder := httptest.NewRecorder()
 
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 	require.NoError(t, err)
+
+	addAuthHeader(request, grpcAuthReq.Token)
 
 	server.router.ServeHTTP(recoder, request)
 	require.Equal(t, http.StatusOK, recoder.Code)
@@ -96,17 +111,30 @@ func TestGetEntry(t *testing.T) {
 		},
 	}
 
+	grpcAuthReq := pb.AuthRequest{
+		Token: util.GetRandomString(32),
+	}
+	grpcAuthRes := pb.AuthResponse{
+		ID:        uuid.New().String(),
+		UserId:    1,
+		CreatedAt: timestamppb.New(createdAt),
+		ExpiredAt: timestamppb.New(createdAt),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	grpc := mockpb.NewMockGalaxyClient(ctrl)
 	grpc.EXPECT().GetEntry(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+	grpc.EXPECT().Authorize(gomock.Any(), gomock.Eq(&grpcAuthReq)).Return(&grpcAuthRes, nil)
 
 	server := NewTestServer(t, grpc)
 	recoder := httptest.NewRecorder()
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	require.NoError(t, err)
+
+	addAuthHeader(request, grpcAuthReq.Token)
 
 	server.router.ServeHTTP(recoder, request)
 	require.Equal(t, http.StatusOK, recoder.Code)
@@ -156,17 +184,31 @@ func TestListEntries(t *testing.T) {
 		Entries: grpcEntries,
 	}
 
+	createdAt := time.Now().UTC().Truncate(time.Second)
+	grpcAuthReq := pb.AuthRequest{
+		Token: util.GetRandomString(32),
+	}
+	grpcAuthRes := pb.AuthResponse{
+		ID:        uuid.New().String(),
+		UserId:    1,
+		CreatedAt: timestamppb.New(createdAt),
+		ExpiredAt: timestamppb.New(createdAt),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	grpc := mockpb.NewMockGalaxyClient(ctrl)
 	grpc.EXPECT().ListEntries(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+	grpc.EXPECT().Authorize(gomock.Any(), gomock.Eq(&grpcAuthReq)).Return(&grpcAuthRes, nil)
 
 	server := NewTestServer(t, grpc)
 	recoder := httptest.NewRecorder()
 
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 	require.NoError(t, err)
+
+	addAuthHeader(request, grpcAuthReq.Token)
 
 	server.router.ServeHTTP(recoder, request)
 	require.Equal(t, http.StatusOK, recoder.Code)
@@ -221,17 +263,31 @@ func TestListEntriesByUser(t *testing.T) {
 		Entries: grpcEntries,
 	}
 
+	createdAt := time.Now().UTC().Truncate(time.Second)
+	grpcAuthReq := pb.AuthRequest{
+		Token: util.GetRandomString(32),
+	}
+	grpcAuthRes := pb.AuthResponse{
+		ID:        uuid.New().String(),
+		UserId:    1,
+		CreatedAt: timestamppb.New(createdAt),
+		ExpiredAt: timestamppb.New(createdAt),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	grpc := mockpb.NewMockGalaxyClient(ctrl)
 	grpc.EXPECT().ListEntriesByUser(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+	grpc.EXPECT().Authorize(gomock.Any(), gomock.Eq(&grpcAuthReq)).Return(&grpcAuthRes, nil)
 
 	server := NewTestServer(t, grpc)
 	recoder := httptest.NewRecorder()
 
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 	require.NoError(t, err)
+
+	addAuthHeader(request, grpcAuthReq.Token)
 
 	server.router.ServeHTTP(recoder, request)
 	require.Equal(t, http.StatusOK, recoder.Code)
@@ -286,17 +342,31 @@ func TestListEntriesByItem(t *testing.T) {
 		Entries: grpcEntries,
 	}
 
+	createdAt := time.Now().UTC().Truncate(time.Second)
+	grpcAuthReq := pb.AuthRequest{
+		Token: util.GetRandomString(32),
+	}
+	grpcAuthRes := pb.AuthResponse{
+		ID:        uuid.New().String(),
+		UserId:    1,
+		CreatedAt: timestamppb.New(createdAt),
+		ExpiredAt: timestamppb.New(createdAt),
+	}
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	grpc := mockpb.NewMockGalaxyClient(ctrl)
 	grpc.EXPECT().ListEntriesByItem(gomock.Any(), gomock.Eq(&grpcReq)).Return(&grpcRes, nil)
+	grpc.EXPECT().Authorize(gomock.Any(), gomock.Eq(&grpcAuthReq)).Return(&grpcAuthRes, nil)
 
 	server := NewTestServer(t, grpc)
 	recoder := httptest.NewRecorder()
 
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 	require.NoError(t, err)
+
+	addAuthHeader(request, grpcAuthReq.Token)
 
 	server.router.ServeHTTP(recoder, request)
 	require.Equal(t, http.StatusOK, recoder.Code)

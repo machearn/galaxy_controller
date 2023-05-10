@@ -67,18 +67,66 @@ func (x *GetUserRequest) GetID() int32 {
 	return 0
 }
 
+type GetUserByUsernameRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+}
+
+func (x *GetUserByUsernameRequest) Reset() {
+	*x = GetUserByUsernameRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rpc_query_user_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetUserByUsernameRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserByUsernameRequest) ProtoMessage() {}
+
+func (x *GetUserByUsernameRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_rpc_query_user_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserByUsernameRequest.ProtoReflect.Descriptor instead.
+func (*GetUserByUsernameRequest) Descriptor() ([]byte, []int) {
+	return file_rpc_query_user_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetUserByUsernameRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
 type GetUserResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	User     *User  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 }
 
 func (x *GetUserResponse) Reset() {
 	*x = GetUserResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_rpc_query_user_proto_msgTypes[1]
+		mi := &file_rpc_query_user_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -91,7 +139,7 @@ func (x *GetUserResponse) String() string {
 func (*GetUserResponse) ProtoMessage() {}
 
 func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_rpc_query_user_proto_msgTypes[1]
+	mi := &file_rpc_query_user_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -104,7 +152,7 @@ func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
 func (*GetUserResponse) Descriptor() ([]byte, []int) {
-	return file_rpc_query_user_proto_rawDescGZIP(), []int{1}
+	return file_rpc_query_user_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetUserResponse) GetUser() *User {
@@ -114,6 +162,13 @@ func (x *GetUserResponse) GetUser() *User {
 	return nil
 }
 
+func (x *GetUserResponse) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 var File_rpc_query_user_proto protoreflect.FileDescriptor
 
 var file_rpc_query_user_proto_rawDesc = []byte{
@@ -121,13 +176,18 @@ var file_rpc_query_user_proto_rawDesc = []byte{
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x70, 0x62, 0x1a, 0x0a, 0x75, 0x73, 0x65, 0x72,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x20, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65,
 	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x49, 0x44, 0x22, 0x2f, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x55,
-	0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x04, 0x75,
-	0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x62, 0x2e, 0x55,
-	0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x42, 0x27, 0x5a, 0x25, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x61, 0x63, 0x68, 0x65, 0x61, 0x72, 0x6e,
-	0x2f, 0x67, 0x61, 0x6c, 0x61, 0x78, 0x79, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f,
-	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x49, 0x44, 0x22, 0x36, 0x0a, 0x18, 0x47, 0x65, 0x74, 0x55,
+	0x73, 0x65, 0x72, 0x42, 0x79, 0x55, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65,
+	0x22, 0x4b, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x08, 0x2e, 0x70, 0x62, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65,
+	0x72, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x42, 0x27, 0x5a,
+	0x25, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x61, 0x63, 0x68,
+	0x65, 0x61, 0x72, 0x6e, 0x2f, 0x67, 0x61, 0x6c, 0x61, 0x78, 0x79, 0x5f, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -142,14 +202,15 @@ func file_rpc_query_user_proto_rawDescGZIP() []byte {
 	return file_rpc_query_user_proto_rawDescData
 }
 
-var file_rpc_query_user_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_rpc_query_user_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_rpc_query_user_proto_goTypes = []interface{}{
-	(*GetUserRequest)(nil),  // 0: pb.GetUserRequest
-	(*GetUserResponse)(nil), // 1: pb.GetUserResponse
-	(*User)(nil),            // 2: pb.User
+	(*GetUserRequest)(nil),           // 0: pb.GetUserRequest
+	(*GetUserByUsernameRequest)(nil), // 1: pb.GetUserByUsernameRequest
+	(*GetUserResponse)(nil),          // 2: pb.GetUserResponse
+	(*User)(nil),                     // 3: pb.User
 }
 var file_rpc_query_user_proto_depIdxs = []int32{
-	2, // 0: pb.GetUserResponse.user:type_name -> pb.User
+	3, // 0: pb.GetUserResponse.user:type_name -> pb.User
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -177,6 +238,18 @@ func file_rpc_query_user_proto_init() {
 			}
 		}
 		file_rpc_query_user_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetUserByUsernameRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rpc_query_user_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetUserResponse); i {
 			case 0:
 				return &v.state
@@ -195,7 +268,7 @@ func file_rpc_query_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_rpc_query_user_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

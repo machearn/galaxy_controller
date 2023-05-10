@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net/http"
 	"os"
 	"testing"
 
@@ -8,6 +9,10 @@ import (
 	"github.com/machearn/galaxy_controller/util"
 	"github.com/stretchr/testify/require"
 )
+
+func addAuthHeader(req *http.Request, token string) {
+	req.Header.Set("authorization", "bearer "+token)
+}
 
 func NewTestServer(t *testing.T, grpc pb.GalaxyClient) *Server {
 	config, err := util.LoadConfig("..")
