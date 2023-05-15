@@ -5,8 +5,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CreateEntryRequest struct {
@@ -34,23 +35,29 @@ func (server *Server) CreateEntry(ctx *gin.Context) {
 
 	_, err := server.grpc.GetUser(ctx, &pb.GetUserRequest{ID: req.UserID})
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		if apiErr.Code == http.StatusNotFound {
-			ctx.JSON(http.StatusBadRequest, errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	_, err = server.grpc.GetItem(ctx, &pb.GetItemRequest{Id: req.ItemID})
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		if apiErr.Code == http.StatusNotFound {
-			ctx.JSON(http.StatusBadRequest, errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -63,8 +70,15 @@ func (server *Server) CreateEntry(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateEntry(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -92,8 +106,15 @@ func (server *Server) GetEntry(ctx *gin.Context) {
 
 	result, err := server.grpc.GetEntry(ctx, &pb.GetEntryRequest{Id: req.ID})
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -131,8 +152,15 @@ func (server *Server) ListEntries(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntries(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -175,8 +203,15 @@ func (server *Server) ListEntriesByUser(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntriesByUser(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -219,8 +254,15 @@ func (server *Server) ListEntriesByItem(ctx *gin.Context) {
 
 	result, err := server.grpc.ListEntriesByItem(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

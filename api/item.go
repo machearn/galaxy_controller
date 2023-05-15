@@ -4,8 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Item struct {
@@ -36,8 +37,15 @@ func (server *Server) CreateItem(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateItem(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -67,8 +75,15 @@ func (server *Server) GetItem(ctx *gin.Context) {
 
 	result, err := server.grpc.GetItem(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -104,8 +119,15 @@ func (server *Server) ListItems(ctx *gin.Context) {
 
 	result, err := server.grpc.ListItems(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -149,8 +171,19 @@ func (server *Server) UpdateItem(ctx *gin.Context) {
 
 	result, err := server.grpc.UpdateItem(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -180,8 +213,15 @@ func (server *Server) DeleteItem(ctx *gin.Context) {
 
 	_, err := server.grpc.DeleteItem(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

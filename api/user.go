@@ -9,6 +9,8 @@ import (
 	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
 	"github.com/machearn/galaxy_controller/util"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type LoginRequest struct {
@@ -111,12 +113,14 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 
 	_, err := server.grpc.GetUserByUsername(ctx, &pb.GetUserByUsernameRequest{Username: req.Username})
 	if err == nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(api_error.NewAPIError(http.StatusBadRequest, "Username already exists")))
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("username already exists")))
 		return
 	} else {
-		if apiErr := err.(*api_error.APIError); apiErr.Code != http.StatusNotFound {
-			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr))
-			return
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() != codes.NotFound {
+				ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+				return
+			}
 		}
 	}
 
@@ -137,8 +141,15 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateUser(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -199,8 +210,15 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 
 	result, err := server.grpc.UpdateUser(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusBadRequest, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -240,8 +258,15 @@ func (server *Server) GetUser(ctx *gin.Context) {
 
 	result, err := server.grpc.GetUser(ctx, &grpcReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusNotFound, errorResponse(apiErr.Err()))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
