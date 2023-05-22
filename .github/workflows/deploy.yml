@@ -21,6 +21,18 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::083420849671:role/controller-deploy
         aws-region: us-east-2
+        
+    - name: AWS Secrets Manager GitHub Action
+      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      with:
+        secret-ids: |
+          TOKEN_SYMMETRIC_KEY
+          GRPC_SERVER_ADDRESS
+          HTTP_SERVER_ADDRESS
+    
+    - name: Write Back Environment
+      run: |
+        python3 env.py
 
     - name: Login to Amazon ECR
       id: login-ecr
