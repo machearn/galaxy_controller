@@ -25,10 +25,8 @@ jobs:
     - name: AWS Secrets Manager GitHub Action
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
-        secret-ids: |
-          TOKEN_SYMMETRIC_KEY
-          GRPC_SERVER_ADDRESS
-          HTTP_SERVER_ADDRESS
+        secret-ids:
+          arn:aws:secretsmanager:us-east-2:083420849671:secret:galaxy-TgDUBy
     
     - name: Write Back Environment
       run: |
