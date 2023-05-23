@@ -25,13 +25,11 @@ def write_env_file(filename, env):
             f.write(f"{key}={value}\n")
 
 def main():
-    # env = read_env_file('app.env')
-    # env['GRPC_SERVER_ADDRESS'] = get_env_variable('GRPC_SERVER_ADDRESS')
-    # env['HTTP_SERVER_ADDRESS'] = get_env_variable('HTTP_SERVER_ADDRESS')
-    # env['TOKEN_SYMMETRIC_KEY'] = get_env_variable('TOKEN_SYMMETRIC_KEY')
-    GALAXY = get_env_variable('GALAXY')
-    print(GALAXY)
-    # write_env_file('app.env', env)
+    env = read_env_file('app.env')
+    env['GRPC_SERVER_ADDRESS'] = get_env_variable('GALAXY_GRPC_SERVER_ADDRESS')
+    env['HTTP_SERVER_ADDRESS'] = get_env_variable('GALAXY_HTTP_SERVER_ADDRESS')
+    env['TOKEN_SYMMETRIC_KEY'] = get_env_variable('GALAXY_TOKEN_SYMMETRIC_KEY')
+    write_env_file('app.env', env)
 
 if __name__ == '__main__':
     main()

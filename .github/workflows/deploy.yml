@@ -23,14 +23,26 @@ jobs:
         aws-region: us-east-2
         
     - name: AWS Secrets Manager GitHub Action
+      id: secret
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
         secret-ids:
-          arn:aws:secretsmanager:us-east-2:083420849671:secret:galaxy-TgDUBy
+          galaxy
+        parse-json-secrets: true
     
     - name: Write Back Environment
       run: |
         python3 env.py
+
+    - name: Push to DockerHub
+      uses: mr-smithers-excellent/docker-build-push@v6
+      with:
+        image: machearn/galaxy_controller
+        tags: latest
+        registry: docker.io
+        dockerfile: Dockerfile
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Login to Amazon ECR
       id: login-ecr
