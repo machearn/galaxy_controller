@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
 	"github.com/machearn/galaxy_controller/util"
 	"google.golang.org/grpc/codes"
@@ -50,8 +49,14 @@ func (server *Server) Login(ctx *gin.Context) {
 
 	userResult, err := server.grpc.GetUserByUsername(ctx, &grpcGetUserRequest)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.NotFound {
+				ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("username or password is incorrect")))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -69,8 +74,14 @@ func (server *Server) Login(ctx *gin.Context) {
 
 	result, err := server.grpc.CreateSession(ctx, &grpcCreateSessionReq)
 	if err != nil {
-		apiErr := err.(*api_error.APIError)
-		ctx.JSON(int(apiErr.Code), errorResponse(apiErr))
+		if apiErr, ok := status.FromError(err); ok {
+			if apiErr.Code() == codes.InvalidArgument {
+				ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("username or password is incorrect")))
+				return
+			}
+			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -121,6 +132,8 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 				ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
 				return
 			}
+		} else {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		}
 	}
 

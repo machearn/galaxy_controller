@@ -11,11 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
-	api_error "github.com/machearn/galaxy_controller/api_errors"
 	"github.com/machearn/galaxy_controller/pb"
 	mockpb "github.com/machearn/galaxy_controller/pb/mock"
 	"github.com/machearn/galaxy_controller/util"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -243,7 +244,7 @@ func TestCreateUserAPI(t *testing.T) {
 
 	grpc := mockpb.NewMockGalaxyClient(ctrl)
 	grpc.EXPECT().GetUserByUsername(gomock.Any(), gomock.Eq(&pb.GetUserByUsernameRequest{Username: "test"})).Return(
-		nil, api_error.NewAPIError(http.StatusNotFound, "user not found"),
+		nil, status.Error(codes.NotFound, "user not found"),
 	)
 	grpc.EXPECT().CreateUser(gomock.Any(), EqCreateUserRequest(&grpcReq)).Return(&grpcRes, nil)
 
