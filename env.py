@@ -27,7 +27,6 @@ def write_env_file(filename, env):
 def main():
     env = read_env_file('app.env')
     env['GRPC_SERVER_ADDRESS'] = get_env_variable('GALAXY_GRPC_SERVER_ADDRESS')
-    env['HTTP_SERVER_ADDRESS'] = get_env_variable('GALAXY_HTTP_SERVER_ADDRESS')
     env['TOKEN_SYMMETRIC_KEY'] = get_env_variable('GALAXY_TOKEN_SYMMETRIC_KEY')
     write_env_file('app.env', env)
 
