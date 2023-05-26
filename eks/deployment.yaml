@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: galaxy-controller-deployment
+  labels:
+    app: galaxy-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: galaxy-controller
+  template:
+    metadata:
+      labels:
+        app: galaxy-controller
+    spec:
+      containers:
+      - name: galaxy-controller
+        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_controller:f4a8d26b50e67b6b8c9e3a00b154c891ab75e4dd
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 300m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+        ports:
+        - containerPort: 8080
