@@ -55,6 +55,7 @@ func (server *Server) Login(ctx *gin.Context) {
 				return
 			}
 			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -80,6 +81,7 @@ func (server *Server) Login(ctx *gin.Context) {
 				return
 			}
 			ctx.JSON(http.StatusInternalServerError, errorResponse(apiErr.Err()))
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -134,6 +136,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 			}
 		} else {
 			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
 		}
 	}
 
