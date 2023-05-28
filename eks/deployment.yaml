@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: galaxy-controller
-        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_controller:f4a8d26b50e67b6b8c9e3a00b154c891ab75e4dd
+        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_controller:latest
         imagePullPolicy: Always
         resources:
           requests:
